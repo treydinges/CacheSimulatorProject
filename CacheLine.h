@@ -10,15 +10,17 @@ class CacheLine {
     public:
         CacheLine();
         CacheLine(int blockSize);
+        bool Contains(int tag);
         void dumpLine();
         void viewLine();
         void flushLine();
         string decimalToHex(int decimalValue); 
     private:
         int B;
-        int V;
-        int D;
-        int T;
+        int V; // valid
+        int D; // dirty bit
+        int T; // tag
+        int timeStamp;
         vector<string> data;
 };
 
