@@ -39,3 +39,7 @@ void Set::flushSet() {
         lines[i].flushLine();
     }
 }
+
+void Set::setBlock(vector<string> block, int evictionLine) {
+    lines[evictionLine].setBlock(block);
+}

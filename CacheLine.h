@@ -13,7 +13,8 @@ class CacheLine {
         void dumpLine();
         void viewLine();
         void flushLine();
-        string decimalToHex(int decimalValue); 
+        string decimalToHex(int decimalValue);
+        void setBlock(vector<string> block);
     private:
         int B;
         int V;

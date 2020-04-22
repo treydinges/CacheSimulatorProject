@@ -61,3 +61,9 @@ string CacheLine::decimalToHex(int decimalValue) {
 
     return hexValue;
 }
+
+void CacheLine::setBlock(vector<string> block) {
+    for (int i = 0; i < B; i++) {
+        data[i] = block[i];
+    }
+}
