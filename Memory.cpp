@@ -70,6 +70,15 @@ void Memory::initializeMemory(string inFileName) {
     }
 }
 
+vector<string> Memory::getBlock(int address, int blockSize) {
+    vector<string> block;
+    string startByte = ram[address];
+    for (int i = startByte; i < startByte + blockSize; i++) {
+        block.push_back(ram[i]);
+    }
+    return block;
+}
+
 void Memory::makeEmpty() {
     for (int i = 0; i < ram.size(); i++) {
         ram[i] = "---";
