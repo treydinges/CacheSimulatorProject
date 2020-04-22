@@ -20,6 +20,15 @@ Set::Set(int associativity, int blockSize) {
     }
 }
 
+bool Set::Contains(int tag) {
+    for (int i = 0; i < E; i++) {
+        if (lines[i].Contains(tag)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Set::dumpSet() {
     for (int i = 0; i < E; i++) {
         lines[i].dumpLine();
