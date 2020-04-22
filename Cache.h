@@ -15,6 +15,7 @@ class Cache {
         void configureCache(Memory Ram, int addressWidth);
         string cacheMenu();
         int hexToDecimal(string hexValue);
+        int binaryToDecimal(string binaryValue);
         string hexToBinary(string hexValue);
         void cacheRead();
         void cacheWrite();
