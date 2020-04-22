@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath> // for pow
+#include <cstdlib> // for rand()
 #include <sstream>
 
 #include "Cache.h"
@@ -198,9 +199,10 @@ void Cache::cacheRead() { // FIXME
     // data:0x84
 
     string address = "";
+    int addressIndex = 0;
     while (true) {
         cin >> address;
-        int addressIndex = hexToDecimal(address);
+        addressIndex = hexToDecimal(address);
         if (addressIndex >= 0 && addressIndex <= M) {
             break;
         }
@@ -224,9 +226,42 @@ void Cache::cacheRead() { // FIXME
         setString += binary[i];
     }
     
-    // cout << "set:";
-    // cout << "tag:";
-    // cout << "hit:";
+    int set = binaryToDecimal(setString);
+    int tag = binaryToDecimal(tagString);
+    int offset = binaryToDecimal(offsetString);
+
+    cout << "set:" << set << endl;
+    cout << "tag:" << tag << endl;
+
+    bool hit = false;
+    int evictionLine = -1;
+    if (sets[set].Contains(tag)) {
+        hit = true;
+    } else {
+        hit = false;
+        // choose which line to replace
+        if (replacement == 1) {
+            // random
+            int random = rand() % E;
+            evictionLine = random;
+            cout << random << endl;
+        } else if (replacement == 2) {
+            // LRU
+        }
+        // get the block from memory & put it in the evicted line
+        vector<string> block = RAM.getBlock(addressIndex, B);
+        sets[set].setBlock(block, evictionLine);
+        sets[set].setTag(tag, evictionLine); // setTag!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        sets[set].setValid(evictionLine); // setValid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // get the byte from the block
+        sets[set].getByte(evictionLine, offset); // getByte!!!!!!!!!!!!!!!!!!!!!!!
+    }
+
+    string hitString = "no";
+    if (hit) {
+        hitString = "yes";
+    }
+    cout << "hit:" << hitString << endl;
     // cout << "eviction_line:";
     // cout << "ram_address:" << address << endl;
     // cout << "data:" << endl;
