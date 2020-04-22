@@ -157,6 +157,17 @@ int Cache::hexToDecimal(string hexValue) {
     return decimalValue;
 }
 
+int Cache::binaryToDecimal(string binaryValue) {
+    int decimal = 0;
+    for (int i = 0; i < binaryValue.length(); i++) {
+        int exponent = 0;
+        if (binaryValue[i] == '1') {
+            exponent++;
+        }
+        decimal += pow(2,exponent);
+    }
+}
+
 string Cache::hexToBinary(string hexValue) {
     if (hexValue[2] == '-') {
         return -1;
@@ -187,12 +198,6 @@ void Cache::cacheRead() { // FIXME
     // data:0x84
 
     string address = "";
-    int set;
-    int tag;
-    string hit;
-    int eviction_line;
-    string data = "";
-
     while (true) {
         cin >> address;
         int addressIndex = hexToDecimal(address);
@@ -203,13 +208,28 @@ void Cache::cacheRead() { // FIXME
             cout << "Please enter a valid address: ";
         }
     }
+
+    string binary = hexToBinary(address);
+
+    string setString = "";
+    string tagString = "";
+    string offsetString = "";
+    for (int i = 0; i < s; i++) {
+        setString += binary[i];
+    }
+    for (int i = s; i < s+t; i++) {
+        setString += binary[i];
+    }
+    for (int i = s+t; i < s+t+b; i++) {
+        setString += binary[i];
+    }
     
-    cout << "set:";
-    cout << "tag:";
-    cout << "hit:";
-    cout << "eviction_line:";
-    cout << "ram_address:" << address << endl;
-    cout << "data:" << endl;
+    // cout << "set:";
+    // cout << "tag:";
+    // cout << "hit:";
+    // cout << "eviction_line:";
+    // cout << "ram_address:" << address << endl;
+    // cout << "data:" << endl;
 }
 
 void Cache::cacheWrite() { // FIXME
