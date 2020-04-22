@@ -157,6 +157,26 @@ int Cache::hexToDecimal(string hexValue) {
     return decimalValue;
 }
 
+string Cache::hexToBinary(string hexValue) {
+    if (hexValue[2] == '-') {
+        return -1;
+    }
+
+    string binaryValue = "";
+    int tempValue = hexToBinary(hexValue);
+
+    vector<int> remainders;
+    while (tempValue > 0) {
+        remainders.push_back(tempValue % 2);
+    }
+    int numDigits = remainders.size();
+    for (int i = 0; i < numDigits; i++) {
+        binaryValue += remainders.pop_back();
+    }
+
+    return binaryValue;
+}
+
 void Cache::cacheRead() { // FIXME
     // cache-read 0x18
     // set:3
