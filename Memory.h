@@ -14,6 +14,10 @@ class Memory {
         Memory(int addressSize);
         ~Memory();
         void initializeMemory(string inFileName);
+<<<<<<< Updated upstream
+=======
+        vector<string> getBlock(int address, int blockSize);
+>>>>>>> Stashed changes
         void makeEmpty();
         void viewRam();
         void dumpRam();
