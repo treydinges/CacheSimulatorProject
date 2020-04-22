@@ -14,15 +14,11 @@ CacheLine::CacheLine(int blockSize) {
     B = blockSize;
     V = 0;
     D = 0;
-    T = -1;
+    T = 0;
     data.resize(B);
     for (int i = 0; i < B; i++) {
         data[i] = "---";
     }
-}
-
-bool CacheLine::Contains(int tag) {
-    return tag == T;
 }
 
 void CacheLine::dumpLine() {
@@ -45,7 +41,7 @@ void CacheLine::flushLine() {
     D = 0;
     T = 0;
     for (int i = 0; i < B; i++) {
-        data[i] = "---";
+        data[i] = "--";
     }
 }
 
@@ -64,4 +60,26 @@ string CacheLine::decimalToHex(int decimalValue) {
     }
 
     return hexValue;
+}
+
+void CacheLine::setBlock(vector<string> block) {
+    for (int i = 0; i < B; i++) {
+        data[i] = block[i];
+    }
+}
+
+void CacheLine::setTag(int tag) {
+    T = tag;
+}
+
+void CacheLine::setValid() {
+    V = 1;
+}
+
+string CacheLine::getByte(int offset) {
+    return data[offset];
+}
+
+bool CacheLine::Contains(int tag) {
+    return tag == T;
 }
