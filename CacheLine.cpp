@@ -73,8 +73,9 @@ bool CacheLine::Contains(int tag) {
     for (int i = 0; i < t; i++) {
         target += data[i];
     }
-    
-    if (tag == target) {
+    targetInt = stoi(target);
+
+    if (tag == targetInt) {
         return true;
     } else {
         return false;
