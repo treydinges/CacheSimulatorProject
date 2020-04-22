@@ -43,3 +43,7 @@ void Set::flushSet() {
 void Set::setBlock(vector<string> block, int evictionLine) {
     lines[evictionLine].setBlock(block);
 }
+
+bool Set::Contains(int tag) {
+    return lines.Contains(tag);
+}

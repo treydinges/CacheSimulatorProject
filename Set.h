@@ -16,6 +16,7 @@ class Set {
         void viewSet();
         void flushSet();
         void setBlock(vector<string> block, int evictionLine);
+        bool Contains(int tag);
     private:
         int E; // number of lines per set (associativity)
         int B; // for creation of the CacheLine

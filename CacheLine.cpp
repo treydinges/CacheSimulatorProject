@@ -67,3 +67,16 @@ void CacheLine::setBlock(vector<string> block) {
         data[i] = block[i];
     }
 }
+
+bool CacheLine::Contains(int tag) {
+    string target = "";
+    for (int i = 0; i < t; i++) {
+        target += data[i];
+    }
+    
+    if (tag == target) {
+        return true;
+    } else {
+        return false;
+    }
+}
