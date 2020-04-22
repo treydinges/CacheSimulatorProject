@@ -160,31 +160,46 @@ int Cache::hexToDecimal(string hexValue) {
 
 int Cache::binaryToDecimal(string binaryValue) {
     int decimal = 0;
-    for (int i = 0; i < binaryValue.length(); i++) {
-        int exponent = 0;
+    int exponent = 0;
+    for (int i = binaryValue.length()-1; i >= 0; i--) {
         if (binaryValue[i] == '1') {
-            exponent++;
+            decimal += pow(2, exponent);
         }
-        decimal += pow(2,exponent);
+        exponent++;
     }
+    return decimal;
+}
+
+string Cache::decimalToBinary(int decimalValue) {
+    string binary = "";
+    for (int i = 0; i < m; i++) {
+        binary += '0';
+    }
+
+    int i = 0;
+    while (decimalValue > 0) {
+        int digit = decimalValue % 2;
+
+        int index = (binary.length() - 1) - i;
+        if (digit == 1) {
+            binary[index] = '1';
+        }
+
+        decimalValue = decimalValue / 2;
+        i++;
+    }
+
+    return binary;
 }
 
 string Cache::hexToBinary(string hexValue) {
     if (hexValue[2] == '-') {
-        return -1;
+        return "";
     }
 
     string binaryValue = "";
-    int tempValue = hexToBinary(hexValue);
-
-    vector<int> remainders;
-    while (tempValue > 0) {
-        remainders.push_back(tempValue % 2);
-    }
-    int numDigits = remainders.size();
-    for (int i = 0; i < numDigits; i++) {
-        binaryValue += remainders.pop_back();
-    }
+    int tempValue = hexToDecimal(hexValue);
+    binaryValue = decimalToBinary(tempValue);
 
     return binaryValue;
 }
@@ -199,7 +214,7 @@ void Cache::cacheRead() { // FIXME
     // data:0x84
 
     string address = "";
-    int addressIndex = 0;
+    int addressIndex = -1;
     while (true) {
         cin >> address;
         addressIndex = hexToDecimal(address);
@@ -216,30 +231,29 @@ void Cache::cacheRead() { // FIXME
     string setString = "";
     string tagString = "";
     string offsetString = "";
-    for (int i = 0; i < s; i++) {
+    for (int i = 0; i < t; i++) {
+        tagString += binary[i];
+    }
+    for (int i = t; i < t+s; i++) {
         setString += binary[i];
     }
-    for (int i = s; i < s+t; i++) {
-        setString += binary[i];
+    for (int i = t+s; i < t+s+b; i++) {
+        offsetString += binary[i];
     }
-    for (int i = s+t; i < s+t+b; i++) {
-        setString += binary[i];
-    }
-    
     int set = binaryToDecimal(setString);
     int tag = binaryToDecimal(tagString);
     int offset = binaryToDecimal(offsetString);
-
+    
     cout << "set:" << set << endl;
     cout << "tag:" << tag << endl;
 
     bool hit = false;
     int evictionLine = -1;
+    string data = "--";
     if (sets[set].Contains(tag)) {
         hit = true;
     } else {
         hit = false;
-        // choose which line to replace
         if (replacement == 1) {
             // random
             int random = rand() % E;
@@ -251,10 +265,10 @@ void Cache::cacheRead() { // FIXME
         // get the block from memory & put it in the evicted line
         vector<string> block = RAM.getBlock(addressIndex, B);
         sets[set].setBlock(block, evictionLine);
-        sets[set].setTag(tag, evictionLine); // setTag!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        sets[set].setValid(evictionLine); // setValid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        sets[set].setTag(tag, evictionLine);
+        sets[set].setValid(evictionLine);
         // get the byte from the block
-        sets[set].getByte(evictionLine, offset); // getByte!!!!!!!!!!!!!!!!!!!!!!!
+        data = sets[set].getByte(evictionLine, offset);
     }
 
     string hitString = "no";
@@ -262,9 +276,9 @@ void Cache::cacheRead() { // FIXME
         hitString = "yes";
     }
     cout << "hit:" << hitString << endl;
-    // cout << "eviction_line:";
-    // cout << "ram_address:" << address << endl;
-    // cout << "data:" << endl;
+    cout << "eviction_line:" << evictionLine << endl;
+    cout << "ram_address:" << address << endl;
+    cout << "data:" << data << endl;
 }
 
 void Cache::cacheWrite() { // FIXME
@@ -276,6 +290,12 @@ void Cache::cacheWrite() { // FIXME
     // ram_address:0x10
     // data:0xAB
     // dirty_bit:1
+
+    // if (writeHit == 1) {
+    //     // writeThrough();
+    // } else if (writeHit == 2) {
+    //     // writeBack();
+    // }
 }
 
 void Cache::cacheFlush() {
