@@ -16,6 +16,7 @@ class Cache {
         string cacheMenu();
         int hexToDecimal(string hexValue);
         int binaryToDecimal(string binaryValue);
+        string decimalToBinary(int decimalValue);
         string hexToBinary(string hexValue);
         void cacheRead();
         void cacheWrite();
