@@ -12,6 +12,7 @@ class Set {
     public:
         Set();
         Set(int associativity, int blockSize);
+        bool Contains(int tag);
         void dumpSet();
         void viewSet();
         void flushSet();
