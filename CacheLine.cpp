@@ -14,11 +14,15 @@ CacheLine::CacheLine(int blockSize) {
     B = blockSize;
     V = 0;
     D = 0;
-    T = 0;
+    T = -1;
     data.resize(B);
     for (int i = 0; i < B; i++) {
         data[i] = "---";
     }
+}
+
+bool CacheLine::Contains(int tag) {
+    return tag == T;
 }
 
 void CacheLine::dumpLine() {
