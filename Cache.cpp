@@ -14,6 +14,13 @@ Cache::Cache() {
 }
 
 void Cache::configureCache(Memory Ram, int addressWidth) {
+    string cacheSizeString;
+    string blockSizeString;
+    string associativityString;
+    string replacementPolicyString;
+    string hitPolicyString;
+    string missPolicyString;
+
     int cacheSize;
     int blockSize;
     int associativity;
@@ -24,67 +31,135 @@ void Cache::configureCache(Memory Ram, int addressWidth) {
     cout << "configure the cache:" << endl;
     cout << "cache size: ";
     while (true) {
-        cin >> cacheSize;
-        if (cacheSize >= 8 && cacheSize <= 256) {
-            break;
+        cin >> cacheSizeString;
+
+        bool valid = true;
+        for (int i = 0; i < cacheSizeString.length(); i++) {
+            if (!isdigit(cacheSizeString[i])) {
+                valid = false;
+            }
         }
-        else {
-            cout << "Please enter a valid number: ";
+
+        if (valid) {
+            cacheSize = stoi(cacheSizeString);
+            if (cacheSize >= 8 && cacheSize <= 256 && valid) {
+                break;
+            } else {
+                cout << "Please enter a valid cache size: ";
+            }
+        } else {
+            cout << "Please enter a valid cache size: ";
         }
     }
     
     cout << "data block size: ";
     while (true) {
-        cin >> blockSize;
-        if (blockSize == 2 || blockSize == 4 || blockSize == 8) {
-            break;
+        cin >> blockSizeString;
+
+        bool valid = true;
+        for (int i = 0; i < blockSizeString.length(); i++) {
+            if (!isdigit(blockSizeString[i])) {
+                valid = false;
+            }
         }
-        else {
-            cout << "Please enter a valid number: ";
+
+        if (valid) {
+            blockSize = stoi(blockSizeString);
+            if (blockSize == 2 || blockSize == 4 || blockSize == 8) {
+                break;
+            } else {
+                cout << "Please enter a valid block size: ";
+            }
+        } else {
+            cout << "Please enter a valid block size: ";
         }
     }
 
     cout << "associativity: ";
     while (true) {
-        cin >> associativity;
-        if (associativity == 1 || associativity == 2 || associativity == 4) {
-            break;
+        cin >> associativityString;
+        bool valid = true;
+        for (int i = 0; i < associativityString.length(); i++) {
+            if (!isdigit(associativityString[i])) {
+                valid = false;
+            }
         }
-        else {
-            cout << "Please enter a valid number: ";
+
+        if (valid) {
+            associativity = stoi(associativityString);
+            if (associativity == 1 || associativity == 2 || associativity == 4) {
+                break;
+            } else {
+                cout << "Please enter a valid associativity: ";
+            }
+        } else {
+            cout << "Please enter a valid associativity: ";
         }
     }
 
     cout << "replacement policy: ";
     while (true) {
-        cin >> replacementPolicy;
-        if (replacementPolicy == 1 || replacementPolicy == 2) {
-            break;
+        cin >> replacementPolicyString;
+        bool valid = true;
+        for (int i = 0; i < replacementPolicyString.length(); i++) {
+            if (!isdigit(replacementPolicyString[i])) {
+                valid = false;
+            }
         }
-        else {
-            cout << "Please enter a valid number: ";
+
+        if (valid) {
+            replacementPolicy = stoi(replacementPolicyString);
+            if (replacementPolicy == 1 || replacementPolicy == 2 || replacementPolicy == 3) {
+                break;
+            } else {
+                cout << "Please enter a valid replacement policy: ";
+            }
+        } else {
+            cout << "Please enter a valid replacement policy: ";
         }
     }
 
     cout << "write hit policy: ";
     while (true) {
-        cin >> hitPolicy;
-        if (hitPolicy == 1 || hitPolicy == 2) {
-            break;
+        cin >> hitPolicyString;
+        bool valid = true;
+        for (int i = 0; i < hitPolicyString.length(); i++) {
+            if (!isdigit(hitPolicyString[i])) {
+                valid = false;
+            }
         }
-        else {
-            cout << "Please enter a valid number: ";
+
+        if (valid) {
+            hitPolicy = stoi(hitPolicyString);
+            if (hitPolicy == 1 || hitPolicy == 2) {
+                break;
+            } else {
+                cout << "Please enter a valid write hit policy: ";
+            }
+        } else {
+            cout << "Please enter a valid write hit policy: ";
         }
     }
 
     cout << "write miss policy: ";
     while (true) {
-        cin >> missPolicy;
-        if (missPolicy == 1 || missPolicy == 2) {
-            break;
+        cin >> missPolicyString;
+        bool valid = true;
+        for (int i = 0; i < missPolicyString.length(); i++) {
+            if (!isdigit(missPolicyString[i])) {
+                valid = false;
+            }
         }
-        else {
-            cout << "Please enter a valid number: ";
+
+        if (valid) {
+            missPolicy = stoi(missPolicyString);
+            if (missPolicy == 1 || missPolicy == 2) {
+                break;
+            } else {
+                cout << "Please enter a valid write miss policy: ";
+            }
+        } else {
+            cout << "Please enter a valid write miss policy: ";
         }
     }
     cout << "cache successfully configured!" << endl;
@@ -217,8 +292,20 @@ void Cache::cacheRead() {
     int addressIndex = 0;
     while (true) {
         cin >> address;
+
+        bool valid = true;
+        for (int i = 0; i < address.length(); i++) {
+            if (!isalpha(address[i]) && !isdigit(address[i])) {
+                valid = false;
+            }
+        }
+
+        if (address[0] != '0' && address[1] != 'x') {
+            valid = false;
+        }
+
         addressIndex = hexToDecimal(address);
-        if (addressIndex >= 0 && addressIndex <= M) {
+        if (addressIndex >= 0 && addressIndex < M && valid) {
             break;
         }
         else {
@@ -243,7 +330,7 @@ void Cache::cacheRead() {
     int set = binaryToDecimal(setString);
     int tag = binaryToDecimal(tagString);
     int offset = binaryToDecimal(offsetString);
-    
+
     cout << "set:" << set << endl;
     cout << "tag:" << tag << endl;
 
@@ -301,18 +388,51 @@ void Cache::cacheWrite() {
     int addressIndex = 0;
     while (true) {
         cin >> address;
-        addressIndex = hexToDecimal(address);
-        if (addressIndex >= 0 && addressIndex <= M) {
-            break;
+
+        bool valid = true;
+        for (int i = 0; i < address.length(); i++) {
+            if (!isalpha(address[i]) && !isdigit(address[i])) {
+                valid = false;
+            }
         }
-        else {
+
+        if (address[0] != '0' && address[1] != 'x') {
+            valid = false;
+        }
+
+        addressIndex = hexToDecimal(address);
+        if (addressIndex >= 0 && addressIndex < M && valid) {
+            break;
+        } else {
             cout << "Please enter a valid address: ";
         }
     }
 
     string data = "";
-    cin >> data;
-    data.erase(0,2);
+    int dataInt = 0;
+    while (true) {
+        cin >> data;
+        
+        bool valid = true;
+        for (int i = 0; i < data.length(); i++) {
+            if (!isalpha(data[i]) && !isdigit(data[i])) {
+                valid = false;
+            }
+        }
+
+        if (data[0] != '0' && data[1] != 'x') {
+            valid = false;
+        }
+
+        dataInt = hexToDecimal(data);
+        if (dataInt >= 0 && dataInt < M && valid) {
+            data.erase(0,2);
+            break;
+        } else {
+            cout << "Please enter valid data: ";
+        }
+    }
+    
 
     string binary = hexToBinary(address);
 
