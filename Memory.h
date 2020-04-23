@@ -15,6 +15,7 @@ class Memory {
         ~Memory();
         void initializeMemory(string inFileName);
         vector<string> getBlock(int address, int blockSize);
+        void writeData(int address, string data);
         void makeEmpty();
         void viewRam();
         void dumpRam();
