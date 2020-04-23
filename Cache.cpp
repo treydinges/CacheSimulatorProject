@@ -297,11 +297,73 @@ void Cache::cacheWrite() { // FIXME
     // data:0xAB
     // dirty_bit:1
 
-    // if (writeHit == 1) {
-    //     // writeThrough();
-    // } else if (writeHit == 2) {
-    //     // writeBack();
-    // }
+    string address = "";
+    int addressIndex = 0;
+    while (true) {
+        cin >> address;
+        addressIndex = hexToDecimal(address);
+        if (addressIndex >= 0 && addressIndex <= M) {
+            break;
+        }
+        else {
+            cout << "Please enter a valid address: ";
+        }
+    }
+
+    string data = "";
+    cin >> data;
+    data.erase(0,2);
+
+    string binary = hexToBinary(address);
+
+    string setString = "";
+    string tagString = "";
+    string offsetString = "";
+    for (int i = 0; i < t; i++) {
+        tagString += binary[i];
+    }
+    for (int i = t; i < t+s; i++) {
+        setString += binary[i];
+    }
+    for (int i = t+s; i < t+s+b; i++) {
+        offsetString += binary[i];
+    }
+    int set = binaryToDecimal(setString);
+    int tag = binaryToDecimal(tagString);
+    int offset = binaryToDecimal(offsetString);
+    
+    cout << "set:" << set << endl;
+    cout << "tag:" << tag << endl;
+
+    bool hit = false;
+    int evictionLine = -1;
+    if (sets[set].Contains(tag)) {
+        hit = true;
+        cacheHits++;
+        // if (writeHit == 1) {
+        //     writeThrough();
+        // } else if (writeHit == 2) {
+        //     writeBack();
+        // }
+    } else {
+        hit = false;
+        cacheMisses++;
+        // if (writeMiss == 1) {
+        //     writeAllocate();
+        // } else if (writeMiss == 2) {
+        //     writeNoAllocate();
+        // }
+    }
+
+    string hitString = "no";
+    if (hit) {
+        hitString = "yes";
+    }
+    cout << "write_hit:" << hitString << endl;
+    cout << "eviction_line:" << evictionLine << endl;
+    cout << "ram_address:" << address << endl;
+    cout << "data:" << data << endl;
+    cout << "dirty_bit:" << data << endl;
 }
 
 void Cache::cacheFlush() {
