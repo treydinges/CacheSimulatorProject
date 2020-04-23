@@ -214,7 +214,7 @@ void Cache::cacheRead() { // FIXME
     // data:0x84
 
     string address = "";
-    int addressIndex = -1;
+    int addressIndex = 0;
     while (true) {
         cin >> address;
         addressIndex = hexToDecimal(address);
