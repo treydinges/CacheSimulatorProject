@@ -23,6 +23,9 @@ class Set {
         string getByte(int tag, int offset, bool hit);
         bool Contains(int tag);
         int findLRU();
+        void writeData(int line, int offset, string data);
+        void makeDirty(int line);
+        int getLine(int tag);
     private:
         int E; // number of lines per set (associativity)
         int B; // for creation of the CacheLine
