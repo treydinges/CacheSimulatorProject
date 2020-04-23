@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
@@ -17,13 +18,17 @@ class CacheLine {
         void setBlock(vector<string> block);
         void setTag(int tag);
         void setValid();
+        void setTime();
+        time_t getTime();
         string getByte(int offset);
+        int getTag();
         bool Contains(int tag);
     private:
         int B;
         int V;
         int D;
         int T;
+        time_t lastUsed;
         vector<string> data;
 };
 

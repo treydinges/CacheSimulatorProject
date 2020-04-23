@@ -204,7 +204,7 @@ string Cache::hexToBinary(string hexValue) {
     return binaryValue;
 }
 
-void Cache::cacheRead() { // FIXME
+void Cache::cacheRead() {
     // cache-read 0x18
     // set:3
     // tag:0
@@ -252,8 +252,11 @@ void Cache::cacheRead() { // FIXME
     string data = "--";
     if (sets[set].Contains(tag)) {
         hit = true;
+        cacheHits++;
+        data = sets[set].getByte(tag, offset, hit);
     } else {
         hit = false;
+        cacheMisses++;
         if (replacement == 1) {
             // random
             int random = rand() % E;
@@ -261,7 +264,10 @@ void Cache::cacheRead() { // FIXME
             cout << random << endl;
         } else if (replacement == 2) {
             // LRU
+            // find the least least recently used
+            evictionLine = sets[set].findLRU();
         }
+
         // get the block from memory & put it in the evicted line
         vector<string> block = RAM.getBlock(addressIndex, B);
         sets[set].setBlock(block, evictionLine);

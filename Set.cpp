@@ -55,6 +55,15 @@ string Set::getByte(int line, int offset) {
     return lines[line].getByte(offset);
 }
 
+string Set::getByte(int tag, int offset, bool hit) {
+    for (int i = 0; i < E; i++) {
+        if (tag == lines[i].getTag()) {
+            return lines[i].getByte(offset);
+        }
+    }
+    return "--";
+}
+
 bool Set::Contains(int tag) {
     bool contains = false;
     for (int i = 0; i < E; i++) {
@@ -63,4 +72,20 @@ bool Set::Contains(int tag) {
         }
     }
     return contains;
+}
+
+int Set::findLRU() {
+    int index = 0;
+
+    double max = 0;
+    time_t currentTime = time(NULL);
+    for (int i = 0; i < E; i++) {
+        double diffTime = difftime(currentTime, lines[i].getTime());
+        if(diffTime > max) {
+            max = diffTime;
+            index = i;
+        }
+    }
+
+    return index;
 }
