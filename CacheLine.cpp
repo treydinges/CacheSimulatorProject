@@ -20,6 +20,7 @@ CacheLine::CacheLine(int blockSize) {
         data[i] = "--";
     }
     this->setTime();
+    frequency = 0;
 }
 
 void CacheLine::dumpLine() {
@@ -49,6 +50,7 @@ void CacheLine::flushLine() {
         data[i] = "--";
     }
     this->setTime();
+    frequency = 0;
 }
 
 string CacheLine::decimalToHex(int decimalValue) {
@@ -80,7 +82,8 @@ void CacheLine::setBlock(vector<string> block) {
     for (int i = 0; i < B; i++) {
         data[i] = block[i];
     }
-    this->setTime();
+    // this->setTime();
+    // frequency++;
 }
 
 void CacheLine::setTag(int tag) {
@@ -99,7 +102,13 @@ time_t CacheLine::getTime() {
     return lastUsed;
 }
 
+int CacheLine::getFrequency() {
+    return frequency;
+}
+
 string CacheLine::getByte(int offset) {
+    this->setTime();
+    frequency++;
     return data[offset];
 }
 
@@ -113,7 +122,8 @@ bool CacheLine::Contains(int tag) {
 
 void CacheLine::writeData(int offset, string data) {
     this->data[offset] = data;
-    this->setTime();
+    // this->setTime();
+    // frequency++;
 }
 
 void CacheLine::makeDirty() {
