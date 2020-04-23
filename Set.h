@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <ctime>
 
 #include "CacheLine.h"
 
@@ -15,8 +16,16 @@ class Set {
         void dumpSet();
         void viewSet();
         void flushSet();
-        void setBlock(vector<string> block, int evictionLine);
+        void setBlock(vector<string> block, int line);
+        void setTag(int tag, int line);
+        void setValid(int line);
+        string getByte(int line, int offset);
+        string getByte(int tag, int offset, bool hit);
         bool Contains(int tag);
+        int findLRU();
+        void writeData(int line, int offset, string data);
+        void makeDirty(int line);
+        int getLine(int tag);
     private:
         int E; // number of lines per set (associativity)
         int B; // for creation of the CacheLine
