@@ -14,7 +14,7 @@ CacheLine::CacheLine(int blockSize) {
     B = blockSize;
     V = 0;
     D = 0;
-    T = 0;
+    T = -1;
     data.resize(B);
     for (int i = 0; i < B; i++) {
         data[i] = "--";
@@ -31,7 +31,11 @@ void CacheLine::dumpLine() {
 void CacheLine::viewLine() {
     cout << V << " ";
     cout << D << " ";
-    cout << decimalToHex(T) << " ";
+    if (T == -1) {
+        cout << "00 ";
+    } else {
+        cout << decimalToHex(T) << " ";
+    }
     for (int i = 0; i < B; i++) {
         cout << data[i] << " ";
     }
@@ -62,7 +66,10 @@ string CacheLine::decimalToHex(int decimalValue) {
     }
 
     if (hexValue.length() != 4) {
+        char lastNum = hexValue[2];
+        hexValue.erase(2,1);
         hexValue += "0";
+        hexValue += lastNum;
     }
 
     hexValue.erase(0,2);
