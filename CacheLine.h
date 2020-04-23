@@ -20,6 +20,7 @@ class CacheLine {
         void setValid();
         void setTime();
         time_t getTime();
+        int getFrequency();
         string getByte(int offset);
         int getTag();
         bool Contains(int tag);
@@ -31,6 +32,7 @@ class CacheLine {
         int D;
         int T;
         time_t lastUsed;
+        int frequency;
         vector<string> data;
 };
 
