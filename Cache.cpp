@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath> // for pow
+#include <cstdlib> // for rand()
 #include <sstream>
 
 #include "Cache.h"
@@ -203,7 +204,7 @@ string Cache::hexToBinary(string hexValue) {
     return binaryValue;
 }
 
-void Cache::cacheRead() { // FIXME
+void Cache::cacheRead() {
     // cache-read 0x18
     // set:3
     // tag:0
@@ -213,9 +214,10 @@ void Cache::cacheRead() { // FIXME
     // data:0x84
 
     string address = "";
+    int addressIndex = 0;
     while (true) {
         cin >> address;
-        int addressIndex = hexToDecimal(address);
+        addressIndex = hexToDecimal(address);
         if (addressIndex >= 0 && addressIndex <= M) {
             break;
         }
@@ -246,13 +248,33 @@ void Cache::cacheRead() { // FIXME
     cout << "tag:" << tag << endl;
 
     bool hit = false;
+    int evictionLine = -1;
+    string data = "--";
     if (sets[set].Contains(tag)) {
         hit = true;
+        cacheHits++;
+        data = sets[set].getByte(tag, offset, hit);
     } else {
         hit = false;
-        // choose which line to replace
-        // get the block from memory
+        cacheMisses++;
+        if (replacement == 1) {
+            // random
+            int random = rand() % E;
+            evictionLine = random;
+            // cout << random << endl;
+        } else if (replacement == 2) {
+            // LRU
+            // find the least least recently used
+            evictionLine = sets[set].findLRU();
+        }
+
+        // get the block from memory & put it in the evicted line
+        vector<string> block = RAM.getBlock(addressIndex, B);
+        sets[set].setBlock(block, evictionLine);
+        sets[set].setTag(tag, evictionLine);
+        sets[set].setValid(evictionLine);
         // get the byte from the block
+        data = sets[set].getByte(evictionLine, offset);
     }
 
     string hitString = "no";
@@ -260,12 +282,12 @@ void Cache::cacheRead() { // FIXME
         hitString = "yes";
     }
     cout << "hit:" << hitString << endl;
-    // cout << "eviction_line:";
-    // cout << "ram_address:" << address << endl;
-    // cout << "data:" << endl;
+    cout << "eviction_line:" << evictionLine << endl;
+    cout << "ram_address:" << address << endl;
+    cout << "data:" << data << endl;
 }
 
-void Cache::cacheWrite() { // FIXME
+void Cache::cacheWrite() {
     // cache-write 0x10 0xAB
     // set:2
     // tag:0
@@ -275,11 +297,109 @@ void Cache::cacheWrite() { // FIXME
     // data:0xAB
     // dirty_bit:1
 
-    // if (writeHit == 1) {
-    //     // writeThrough();
-    // } else if (writeHit == 2) {
-    //     // writeBack();
-    // }
+    string address = "";
+    int addressIndex = 0;
+    while (true) {
+        cin >> address;
+        addressIndex = hexToDecimal(address);
+        if (addressIndex >= 0 && addressIndex <= M) {
+            break;
+        }
+        else {
+            cout << "Please enter a valid address: ";
+        }
+    }
+
+    string data = "";
+    cin >> data;
+    data.erase(0,2);
+
+    string binary = hexToBinary(address);
+
+    string setString = "";
+    string tagString = "";
+    string offsetString = "";
+    for (int i = 0; i < t; i++) {
+        tagString += binary[i];
+    }
+    for (int i = t; i < t+s; i++) {
+        setString += binary[i];
+    }
+    for (int i = t+s; i < t+s+b; i++) {
+        offsetString += binary[i];
+    }
+    int set = binaryToDecimal(setString);
+    int tag = binaryToDecimal(tagString);
+    int offset = binaryToDecimal(offsetString);
+    
+    cout << "set:" << set << endl;
+    cout << "tag:" << tag << endl;
+
+    bool hit = false;
+    int evictionLine = -1;
+    int dirty = 0;
+    if (sets[set].Contains(tag)) {
+        hit = true;
+        cacheHits++;
+        int hitLine = sets[set].getLine(tag);
+        if (writeHit == 1) {
+            // write through
+            RAM.writeData(addressIndex, data);
+            sets[set].writeData(hitLine, offset, data);
+        } else if (writeHit == 2) {
+            // write back
+            sets[set].writeData(hitLine, offset, data);
+            sets[set].makeDirty(hitLine);
+            dirty = 1;
+        }
+        address = "-1";
+    } else {
+        hit = false;
+        cacheMisses++;
+        // find the eviction line
+        if (replacement == 1) {
+            // random
+            int random = rand() % E;
+            evictionLine = random;
+            cout << random << endl;
+        } else if (replacement == 2) {
+            // LRU
+            // find the least least recently used
+            evictionLine = sets[set].findLRU();
+        }
+        if (writeMiss == 1) {
+            // write allocate
+            // put the block into cache
+            vector<string> block = RAM.getBlock(addressIndex, B);
+            sets[set].setBlock(block, evictionLine);
+            sets[set].setTag(tag, evictionLine);
+            sets[set].setValid(evictionLine);
+            // followed by the write hit action
+            if (writeHit == 1) {
+                // write through
+                RAM.writeData(addressIndex, data);
+                sets[set].writeData(evictionLine, offset, data);
+            } else if (writeHit == 2) {
+                // write back
+                sets[set].writeData(evictionLine, offset, data);
+                sets[set].makeDirty(evictionLine);
+                dirty = 1;
+            }
+        } else if (writeMiss == 2) {
+            // no write allocate
+            RAM.writeData(addressIndex, data);
+        }
+    }
+
+    string hitString = "no";
+    if (hit) {
+        hitString = "yes";
+    }
+    cout << "write_hit:" << hitString << endl;
+    cout << "eviction_line:" << evictionLine << endl;
+    cout << "ram_address:" << address << endl;
+    cout << "data:" << data << endl;
+    cout << "dirty_bit:" << dirty << endl;
 }
 
 void Cache::cacheFlush() {

@@ -17,8 +17,9 @@ CacheLine::CacheLine(int blockSize) {
     T = 0;
     data.resize(B);
     for (int i = 0; i < B; i++) {
-        data[i] = "---";
+        data[i] = "--";
     }
+    this->setTime();
 }
 
 void CacheLine::dumpLine() {
@@ -41,14 +42,15 @@ void CacheLine::flushLine() {
     D = 0;
     T = 0;
     for (int i = 0; i < B; i++) {
-        data[i] = "---";
+        data[i] = "--";
     }
+    this->setTime();
 }
 
 string CacheLine::decimalToHex(int decimalValue) {
-    string hexValue = "";
+    string hexValue = "0x";
     if (decimalValue < 10) {
-        hexValue = "0";
+        hexValue += "0";
     }
 
     stringstream ss;
@@ -59,6 +61,11 @@ string CacheLine::decimalToHex(int decimalValue) {
         hexValue[i] = toupper(hexValue[i]);
     }
 
+    if (hexValue.length() != 4) {
+        hexValue += "0";
+    }
+
+    hexValue.erase(0,2);
     return hexValue;
 }
 
@@ -66,18 +73,42 @@ void CacheLine::setBlock(vector<string> block) {
     for (int i = 0; i < B; i++) {
         data[i] = block[i];
     }
+    this->setTime();
+}
+
+void CacheLine::setTag(int tag) {
+    T = tag;
+}
+
+void CacheLine::setValid() {
+    V = 1;
+}
+
+void CacheLine::setTime() {
+    lastUsed = time(NULL);
+}
+
+time_t CacheLine::getTime() {
+    return lastUsed;
+}
+
+string CacheLine::getByte(int offset) {
+    return data[offset];
+}
+
+int CacheLine::getTag() {
+    return T;
 }
 
 bool CacheLine::Contains(int tag) {
-    string target = "";
-    for (int i = 0; i < t; i++) {
-        target += data[i];
-    }
-    targetInt = stoi(target);
+    return tag == T;
+}
 
-    if (tag == targetInt) {
-        return true;
-    } else {
-        return false;
-    }
+void CacheLine::writeData(int offset, string data) {
+    this->data[offset] = data;
+    this->setTime();
+}
+
+void CacheLine::makeDirty() {
+    D = 1;
 }

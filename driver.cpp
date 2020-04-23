@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
 
     Cache cache;
-    // will handle setting the private data members the cache
+    // will handle setting the private data members in the cache
     cache.configureCache(Ram, ADDRESS_WIDTH);
     
     string selection = "";
