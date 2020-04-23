@@ -361,7 +361,7 @@ void Cache::cacheWrite() {
             // random
             int random = rand() % E;
             evictionLine = random;
-            cout << random << endl;
+            // cout << random << endl;
         } else if (replacement == 2) {
             // LRU
             // find the least least recently used
