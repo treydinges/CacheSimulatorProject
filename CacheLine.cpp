@@ -103,3 +103,12 @@ int CacheLine::getTag() {
 bool CacheLine::Contains(int tag) {
     return tag == T;
 }
+
+void CacheLine::writeData(int offset, string data) {
+    this->data[offset] = data;
+    this->setTime();
+}
+
+void CacheLine::makeDirty() {
+    D = 1;
+}
