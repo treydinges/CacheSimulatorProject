@@ -90,6 +90,48 @@ int Set::findLRU() {
     return index;
 }
 
+int Set::findLRU(vector<int> tieLines) {
+    int index = 0;
+    double max = 0;
+
+    time_t currentTime = time(NULL);
+    for (int i = 0; i < tieLines.size(); i++) {
+        double diffTime = difftime(currentTime, lines[tieLines[i]].getTime());
+        if(diffTime > max) {
+            max = diffTime;
+            index = i;
+        }
+    }
+
+    return index;
+}
+
+int Set::findLFU() {
+    vector<int> tieLines;
+    int index = 0;
+    int min = INT_MAX;
+    bool tie = false;
+    for (int i = 0; i < E; i++) {
+        int frequency = lines[i].getFrequency();
+        // cout << "frequency: " << frequency << endl;
+        if(frequency < min) {
+            min = frequency;
+            index = i;
+            tie = false;
+            tieLines.clear();
+        } else if (frequency == min) {
+            tieLines.push_back(i);
+            tie = true;
+        }
+    }
+
+    if (tie) {
+        return findLRU(tieLines);
+    }
+
+    return index;
+}
+
 void Set::writeData(int line, int offset, string data) {
     lines[line].writeData(offset, data);
 }
