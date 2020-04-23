@@ -89,3 +89,19 @@ int Set::findLRU() {
 
     return index;
 }
+
+void Set::writeData(int line, int offset, string data) {
+    lines[line].writeData(offset, data);
+}
+
+void Set::makeDirty(int line) {
+    lines[line].makeDirty();
+}
+
+int Set::getLine(int tag) {
+    for (int i = 0; i < E; i++) {
+        if (lines[i].Contains(tag)) {
+            return i;
+        }
+    }
+}

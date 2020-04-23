@@ -23,6 +23,8 @@ class CacheLine {
         string getByte(int offset);
         int getTag();
         bool Contains(int tag);
+        void writeData(int offset, string data);
+        void makeDirty();
     private:
         int B;
         int V;
