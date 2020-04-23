@@ -351,8 +351,12 @@ void Cache::cacheRead() {
             // cout << random << endl;
         } else if (replacement == 2) {
             // LRU
-            // find the least least recently used
+            // find the least recently used
             evictionLine = sets[set].findLRU();
+        } else if (replacement == 3) {
+            // LFU
+            // find the least frequently used
+            evictionLine = sets[set].findLFU();
         }
 
         // get the block from memory & put it in the evicted line
@@ -472,6 +476,7 @@ void Cache::cacheWrite() {
             sets[set].makeDirty(hitLine);
             dirty = 1;
         }
+        data = sets[set].getByte(hitLine, offset);
         address = "-1";
     } else {
         hit = false;
@@ -486,6 +491,10 @@ void Cache::cacheWrite() {
             // LRU
             // find the least least recently used
             evictionLine = sets[set].findLRU();
+        } else if (replacement == 3) {
+            // LFU
+            // find the least frequently used
+            evictionLine = sets[set].findLFU();
         }
         if (writeMiss == 1) {
             // write allocate
@@ -505,6 +514,7 @@ void Cache::cacheWrite() {
                 sets[set].makeDirty(evictionLine);
                 dirty = 1;
             }
+            data = sets[set].getByte(evictionLine, offset);
         } else if (writeMiss == 2) {
             // no write allocate
             RAM.writeData(addressIndex, data);
@@ -557,6 +567,7 @@ void Cache::cacheView() {
     cout << "replacement_policy:";
     if (replacement == 1) cout << "random_replacement" << endl;
     else if (replacement == 2) cout << "least_recently_used" << endl;
+    else if (replacement == 3) cout << "least_frequently_used" << endl;
 
     cout << "write_hit_policy:";
     if (writeHit == 1) cout << "write_through" << endl;
