@@ -261,7 +261,7 @@ void Cache::cacheRead() {
             // random
             int random = rand() % E;
             evictionLine = random;
-            cout << random << endl;
+            // cout << random << endl;
         } else if (replacement == 2) {
             // LRU
             // find the least least recently used
@@ -287,7 +287,7 @@ void Cache::cacheRead() {
     cout << "data:" << data << endl;
 }
 
-void Cache::cacheWrite() { // FIXME
+void Cache::cacheWrite() {
     // cache-write 0x10 0xAB
     // set:2
     // tag:0
@@ -337,22 +337,58 @@ void Cache::cacheWrite() { // FIXME
 
     bool hit = false;
     int evictionLine = -1;
+    int dirty = 0;
     if (sets[set].Contains(tag)) {
         hit = true;
         cacheHits++;
-        // if (writeHit == 1) {
-        //     writeThrough();
-        // } else if (writeHit == 2) {
-        //     writeBack();
-        // }
+        int hitLine = sets[set].getLine(tag);
+        if (writeHit == 1) {
+            // write through
+            RAM.writeData(addressIndex, data);
+            sets[set].writeData(hitLine, offset, data);
+        } else if (writeHit == 2) {
+            // write back
+            sets[set].writeData(hitLine, offset, data);
+            sets[set].makeDirty(hitLine);
+            dirty = 1;
+        }
+        address = "-1";
     } else {
         hit = false;
         cacheMisses++;
-        // if (writeMiss == 1) {
-        //     writeAllocate();
-        // } else if (writeMiss == 2) {
-        //     writeNoAllocate();
-        // }
+        // find the eviction line
+        if (replacement == 1) {
+            // random
+            int random = rand() % E;
+            evictionLine = random;
+            cout << random << endl;
+        } else if (replacement == 2) {
+            // LRU
+            // find the least least recently used
+            evictionLine = sets[set].findLRU();
+        }
+        if (writeMiss == 1) {
+            // write allocate
+            // put the block into cache
+            vector<string> block = RAM.getBlock(addressIndex, B);
+            sets[set].setBlock(block, evictionLine);
+            sets[set].setTag(tag, evictionLine);
+            sets[set].setValid(evictionLine);
+            // followed by the write hit action
+            if (writeHit == 1) {
+                // write through
+                RAM.writeData(addressIndex, data);
+                sets[set].writeData(evictionLine, offset, data);
+            } else if (writeHit == 2) {
+                // write back
+                sets[set].writeData(evictionLine, offset, data);
+                sets[set].makeDirty(evictionLine);
+                dirty = 1;
+            }
+        } else if (writeMiss == 2) {
+            // no write allocate
+            RAM.writeData(addressIndex, data);
+        }
     }
 
     string hitString = "no";
@@ -363,7 +399,7 @@ void Cache::cacheWrite() { // FIXME
     cout << "eviction_line:" << evictionLine << endl;
     cout << "ram_address:" << address << endl;
     cout << "data:" << data << endl;
-    cout << "dirty_bit:" << data << endl;
+    cout << "dirty_bit:" << dirty << endl;
 }
 
 void Cache::cacheFlush() {
