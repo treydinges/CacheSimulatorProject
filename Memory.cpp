@@ -16,7 +16,7 @@ Memory::Memory(int addressSize) {
     int ramSize = pow(2, addressSize);
     ram.resize(ramSize);
     for (int i = 0; i < ram.size(); i++) {
-        ram[i] = "---";
+        ram[i] = "--";
     }
 }
 
@@ -72,8 +72,8 @@ void Memory::initializeMemory(string inFileName) {
 
 vector<string> Memory::getBlock(int address, int blockSize) {
     vector<string> block;
-    int startByte = ram[address];
-    for (int i = startByte; i < startByte + blockSize; i++) {
+    string startByte = ram[address];
+    for (int i = address; i < address + blockSize; i++) {
         block.push_back(ram[i]);
     }
     return block;
@@ -81,7 +81,7 @@ vector<string> Memory::getBlock(int address, int blockSize) {
 
 void Memory::makeEmpty() {
     for (int i = 0; i < ram.size(); i++) {
-        ram[i] = "---";
+        ram[i] = "--";
     }
 }
 
@@ -105,7 +105,7 @@ void Memory::dumpRam() {
 
 bool Memory::isEmpty() {
     for (int i = 0; i < ram.size(); i++) {
-        if (ram[i] != "---") {
+        if (ram[i] != "--") {
             return false;
         }
     }
