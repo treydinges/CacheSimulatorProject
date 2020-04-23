@@ -79,6 +79,10 @@ vector<string> Memory::getBlock(int address, int blockSize) {
     return block;
 }
 
+void Memory::writeData(int address, string data) {
+    ram[address] = data;
+}
+
 void Memory::makeEmpty() {
     for (int i = 0; i < ram.size(); i++) {
         ram[i] = "--";
