@@ -48,9 +48,9 @@ void CacheLine::flushLine() {
 }
 
 string CacheLine::decimalToHex(int decimalValue) {
-    string hexValue = "";
+    string hexValue = "0x";
     if (decimalValue < 10) {
-        hexValue = "0";
+        hexValue += "0";
     }
 
     stringstream ss;
@@ -61,6 +61,11 @@ string CacheLine::decimalToHex(int decimalValue) {
         hexValue[i] = toupper(hexValue[i]);
     }
 
+    if (hexValue.length() != 4) {
+        hexValue += "0";
+    }
+
+    hexValue.erase(0,2);
     return hexValue;
 }
 
