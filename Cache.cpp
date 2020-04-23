@@ -249,6 +249,7 @@ void Cache::cacheRead() { // FIXME
 
     bool hit = false;
     int evictionLine = -1;
+    string data = "--";
     if (sets[set].Contains(tag)) {
         hit = true;
     } else {
@@ -264,10 +265,10 @@ void Cache::cacheRead() { // FIXME
         // get the block from memory & put it in the evicted line
         vector<string> block = RAM.getBlock(addressIndex, B);
         sets[set].setBlock(block, evictionLine);
-        sets[set].setTag(tag, evictionLine); // setTag!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        sets[set].setValid(evictionLine); // setValid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        sets[set].setTag(tag, evictionLine);
+        sets[set].setValid(evictionLine);
         // get the byte from the block
-        sets[set].getByte(evictionLine, offset); // getByte!!!!!!!!!!!!!!!!!!!!!!!
+        data = sets[set].getByte(evictionLine, offset);
     }
 
     string hitString = "no";
@@ -275,9 +276,9 @@ void Cache::cacheRead() { // FIXME
         hitString = "yes";
     }
     cout << "hit:" << hitString << endl;
-    // cout << "eviction_line:";
-    // cout << "ram_address:" << address << endl;
-    // cout << "data:" << endl;
+    cout << "eviction_line:" << evictionLine << endl;
+    cout << "ram_address:" << address << endl;
+    cout << "data:" << data << endl;
 }
 
 void Cache::cacheWrite() { // FIXME

@@ -41,7 +41,7 @@ void CacheLine::flushLine() {
     D = 0;
     T = 0;
     for (int i = 0; i < B; i++) {
-        data[i] = "---";
+        data[i] = "--";
     }
 }
 
@@ -68,16 +68,18 @@ void CacheLine::setBlock(vector<string> block) {
     }
 }
 
-bool CacheLine::Contains(int tag) {
-    string target = "";
-    for (int i = 0; i < t; i++) {
-        target += data[i];
-    }
-    targetInt = stoi(target);
+void CacheLine::setTag(int tag) {
+    T = tag;
+}
 
-    if (tag == targetInt) {
-        return true;
-    } else {
-        return false;
-    }
+void CacheLine::setValid() {
+    V = 1;
+}
+
+string CacheLine::getByte(int offset) {
+    return data[offset];
+}
+
+bool CacheLine::Contains(int tag) {
+    return tag == T;
 }

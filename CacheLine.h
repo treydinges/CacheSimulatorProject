@@ -15,6 +15,9 @@ class CacheLine {
         void flushLine();
         string decimalToHex(int decimalValue);
         void setBlock(vector<string> block);
+        void setTag(int tag);
+        void setValid();
+        string getByte(int offset);
         bool Contains(int tag);
     private:
         int B;

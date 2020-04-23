@@ -40,10 +40,27 @@ void Set::flushSet() {
     }
 }
 
-void Set::setBlock(vector<string> block, int evictionLine) {
-    lines[evictionLine].setBlock(block);
+void Set::setBlock(vector<string> block, int line) {
+    lines[line].setBlock(block);
+}
+
+void Set::setTag(int tag, int line) {
+    lines[line].setTag(tag);
+}
+void Set::setValid(int line) {
+    lines[line].setValid();
+}
+
+string Set::getByte(int line, int offset) {
+    return lines[line].getByte(offset);
 }
 
 bool Set::Contains(int tag) {
-    return lines.Contains(tag);
+    bool contains = false;
+    for (int i = 0; i < E; i++) {
+        if (lines[i].Contains(tag)) {
+            contains = true;
+        }
+    }
+    return contains;
 }
