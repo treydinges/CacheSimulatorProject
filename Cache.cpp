@@ -334,10 +334,11 @@ void Cache::cacheRead() {
     cout << "set:" << set << endl;
     cout << "tag:" << tag << endl;
 
+    int hitLine = sets[set].getLine(tag);
     bool hit = false;
     int evictionLine = -1;
     string data = "--";
-    if (sets[set].Contains(tag)) {
+    if (sets[set].Contains(tag) && sets[set].isValid(hitLine)) {
         hit = true;
         cacheHits++;
         data = sets[set].getByte(tag, offset, hit);
@@ -359,11 +360,21 @@ void Cache::cacheRead() {
             evictionLine = sets[set].findLFU();
         }
 
+        if (writeHit == 2 && sets[set].isDirty(evictionLine)) {
+            vector<string> block = sets[set].getBlock(evictionLine);
+            int oldAddress = sets[set].getAddress(evictionLine);
+            RAM.setBlock(oldAddress, block, B);
+            sets[set].makeClean(evictionLine);
+            sets[set].setInvalid(evictionLine);
+            sets[set].setTag(-1, evictionLine);
+        }
+
         // get the block from memory & put it in the evicted line
         vector<string> block = RAM.getBlock(addressIndex, B);
         sets[set].setBlock(block, evictionLine);
         sets[set].setTag(tag, evictionLine);
         sets[set].setValid(evictionLine);
+        sets[set].setAddress(evictionLine, addressIndex);
         // get the byte from the block
         data = sets[set].getByte(evictionLine, offset);
     }
@@ -459,13 +470,14 @@ void Cache::cacheWrite() {
     cout << "set:" << set << endl;
     cout << "tag:" << tag << endl;
 
+    int hitLine = sets[set].getLine(tag);
     bool hit = false;
     int evictionLine = -1;
     int dirty = 0;
-    if (sets[set].Contains(tag)) {
+    if (sets[set].Contains(tag) && sets[set].isValid(hitLine)) {
         hit = true;
         cacheHits++;
-        int hitLine = sets[set].getLine(tag);
+        // int hitLine = sets[set].getLine(tag);
         if (writeHit == 1) {
             // write through
             RAM.writeData(addressIndex, data);
@@ -496,6 +508,16 @@ void Cache::cacheWrite() {
             // find the least frequently used
             evictionLine = sets[set].findLFU();
         }
+
+        if (writeHit == 2 && sets[set].isDirty(evictionLine)) {
+            vector<string> block = sets[set].getBlock(evictionLine);
+            int oldAddress = sets[set].getAddress(evictionLine);
+            RAM.setBlock(oldAddress, block, B);
+            sets[set].makeClean(evictionLine);
+            sets[set].setInvalid(evictionLine);
+            sets[set].setTag(-1, evictionLine);
+        }
+        
         if (writeMiss == 1) {
             // write allocate
             // put the block into cache
@@ -503,6 +525,7 @@ void Cache::cacheWrite() {
             sets[set].setBlock(block, evictionLine);
             sets[set].setTag(tag, evictionLine);
             sets[set].setValid(evictionLine);
+            sets[set].setAddress(evictionLine, addressIndex);
             // followed by the write hit action
             if (writeHit == 1) {
                 // write through
@@ -535,6 +558,17 @@ void Cache::cacheWrite() {
 void Cache::cacheFlush() {
     // cache-flush
     // cache_cleared
+
+    for (int set = 0; set < S; set++) {
+        for (int line = 0; line < E; line++) {
+            if (writeHit == 2 && sets[set].isDirty(line)) {
+                vector<string> block = sets[set].getBlock(line);
+                int addressIndex = sets[set].getAddress(line);
+                RAM.setBlock(addressIndex, block, B);
+            }
+        }
+    }
+
     for (int i = 0; i < S; i++) {
         sets[i].flushSet();
     }
