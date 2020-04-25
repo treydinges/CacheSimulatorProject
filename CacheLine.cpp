@@ -45,7 +45,7 @@ void CacheLine::viewLine() {
 void CacheLine::flushLine() {
     V = 0;
     D = 0;
-    T = 0;
+    T = -1;
     for (int i = 0; i < B; i++) {
         data[i] = "--";
     }
@@ -86,12 +86,27 @@ void CacheLine::setBlock(vector<string> block) {
     // frequency++;
 }
 
+vector<string> CacheLine::getBlock() {
+    return data;
+}
+
 void CacheLine::setTag(int tag) {
     T = tag;
 }
 
 void CacheLine::setValid() {
     V = 1;
+}
+
+void CacheLine::setInvalid() {
+    V = 0;
+}
+
+bool CacheLine::isValid() {
+    if (V == 1) {
+        return true;
+    }
+    return false;
 }
 
 void CacheLine::setTime() {
@@ -128,4 +143,23 @@ void CacheLine::writeData(int offset, string data) {
 
 void CacheLine::makeDirty() {
     D = 1;
+}
+
+void CacheLine::makeClean() {
+    D = 0;
+}
+
+bool CacheLine::isDirty() {
+    if (D == 1) {
+        return true;
+    }
+    return false;
+}
+
+void CacheLine::setAddress(int address) {
+    A = address;
+}
+
+int CacheLine::getAddress() {
+    return A;
 }
