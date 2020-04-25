@@ -44,11 +44,27 @@ void Set::setBlock(vector<string> block, int line) {
     lines[line].setBlock(block);
 }
 
+vector<string> Set::getBlock(int line) {
+    return lines[line].getBlock();
+}
+
 void Set::setTag(int tag, int line) {
     lines[line].setTag(tag);
 }
+
 void Set::setValid(int line) {
     lines[line].setValid();
+}
+
+void Set::setInvalid(int line) {
+    lines[line].setInvalid();
+}
+
+bool Set::isValid(int line) {
+    if (line < 0 || line >= lines.size()) {
+        return false;
+    }
+    return lines[line].isValid();
 }
 
 string Set::getByte(int line, int offset) {
@@ -140,10 +156,27 @@ void Set::makeDirty(int line) {
     lines[line].makeDirty();
 }
 
+void Set::makeClean(int line) {
+    lines[line].makeClean();
+}
+
+bool Set::isDirty(int line) {
+    return lines[line].isDirty();
+}
+
 int Set::getLine(int tag) {
     for (int i = 0; i < E; i++) {
         if (lines[i].Contains(tag)) {
             return i;
         }
     }
+    return -1;
+}
+
+void Set::setAddress(int line, int address) {
+    lines[line].setAddress(address);
+}
+
+int Set::getAddress(int line) {
+    return lines[line].getAddress();
 }
