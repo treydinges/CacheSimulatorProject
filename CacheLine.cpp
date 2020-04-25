@@ -14,12 +14,13 @@ CacheLine::CacheLine(int blockSize) {
     B = blockSize;
     V = 0;
     D = 0;
-    T = 0;
+    T = -1;
     data.resize(B);
     for (int i = 0; i < B; i++) {
         data[i] = "--";
     }
     this->setTime();
+    frequency = 0;
 }
 
 void CacheLine::dumpLine() {
@@ -31,7 +32,11 @@ void CacheLine::dumpLine() {
 void CacheLine::viewLine() {
     cout << V << " ";
     cout << D << " ";
-    cout << decimalToHex(T) << " ";
+    if (T == -1) {
+        cout << "00 ";
+    } else {
+        cout << decimalToHex(T) << " ";
+    }
     for (int i = 0; i < B; i++) {
         cout << data[i] << " ";
     }
@@ -40,11 +45,12 @@ void CacheLine::viewLine() {
 void CacheLine::flushLine() {
     V = 0;
     D = 0;
-    T = 0;
+    T = -1;
     for (int i = 0; i < B; i++) {
         data[i] = "--";
     }
     this->setTime();
+    frequency = 0;
 }
 
 string CacheLine::decimalToHex(int decimalValue) {
@@ -62,7 +68,10 @@ string CacheLine::decimalToHex(int decimalValue) {
     }
 
     if (hexValue.length() != 4) {
+        char lastNum = hexValue[2];
+        hexValue.erase(2,1);
         hexValue += "0";
+        hexValue += lastNum;
     }
 
     hexValue.erase(0,2);
@@ -73,7 +82,12 @@ void CacheLine::setBlock(vector<string> block) {
     for (int i = 0; i < B; i++) {
         data[i] = block[i];
     }
-    this->setTime();
+    // this->setTime();
+    // frequency++;
+}
+
+vector<string> CacheLine::getBlock() {
+    return data;
 }
 
 void CacheLine::setTag(int tag) {
@@ -84,6 +98,17 @@ void CacheLine::setValid() {
     V = 1;
 }
 
+void CacheLine::setInvalid() {
+    V = 0;
+}
+
+bool CacheLine::isValid() {
+    if (V == 1) {
+        return true;
+    }
+    return false;
+}
+
 void CacheLine::setTime() {
     lastUsed = time(NULL);
 }
@@ -92,7 +117,13 @@ time_t CacheLine::getTime() {
     return lastUsed;
 }
 
+int CacheLine::getFrequency() {
+    return frequency;
+}
+
 string CacheLine::getByte(int offset) {
+    this->setTime();
+    frequency++;
     return data[offset];
 }
 
@@ -106,9 +137,29 @@ bool CacheLine::Contains(int tag) {
 
 void CacheLine::writeData(int offset, string data) {
     this->data[offset] = data;
-    this->setTime();
+    // this->setTime();
+    // frequency++;
 }
 
 void CacheLine::makeDirty() {
     D = 1;
+}
+
+void CacheLine::makeClean() {
+    D = 0;
+}
+
+bool CacheLine::isDirty() {
+    if (D == 1) {
+        return true;
+    }
+    return false;
+}
+
+void CacheLine::setAddress(int address) {
+    A = address;
+}
+
+int CacheLine::getAddress() {
+    return A;
 }

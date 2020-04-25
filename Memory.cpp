@@ -72,11 +72,23 @@ void Memory::initializeMemory(string inFileName) {
 
 vector<string> Memory::getBlock(int address, int blockSize) {
     vector<string> block;
-    string startByte = ram[address];
+    // string startByte = ram[address];
+    int index = address % blockSize;
+    address = address - index;
     for (int i = address; i < address + blockSize; i++) {
         block.push_back(ram[i]);
     }
     return block;
+}
+
+void Memory::setBlock(int address, vector<string> block, int blockSize) {
+    int index = address % blockSize;
+    address = address - index;
+    int count = 0;
+    for (int i = address; i < address + blockSize; i++) {
+        ram[i] = block[count];
+        count++;
+    }
 }
 
 void Memory::writeData(int address, string data) {
