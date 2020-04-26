@@ -300,8 +300,21 @@ void Cache::cacheRead() {
             }
         }
 
-        if (address[0] != '0' && address[1] != 'x') {
+        if (address[0] != '0' || address[1] != 'x') {
             valid = false;
+        }
+
+        if (address.length() <= 2) {
+            valid = false;
+        }
+
+        if (address.length() > 2) {
+            for (int i = 2; i < address.length(); i++) {
+                char current = tolower(address[i]);
+                if (current > 'f') {
+                    valid = false;
+                }
+            }
         }
 
         addressIndex = hexToDecimal(address);
@@ -411,8 +424,21 @@ void Cache::cacheWrite() {
             }
         }
 
-        if (address[0] != '0' && address[1] != 'x') {
+        if (address[0] != '0' || address[1] != 'x') {
             valid = false;
+        }
+
+        if (address.length() <= 2) {
+            valid = false;
+        }
+
+        if (address.length() > 2) {
+            for (int i = 2; i < address.length(); i++) {
+                char current = tolower(address[i]);
+                if (current > 'f') {
+                    valid = false;
+                }
+            }
         }
 
         addressIndex = hexToDecimal(address);
@@ -435,8 +461,25 @@ void Cache::cacheWrite() {
             }
         }
 
-        if (data[0] != '0' && data[1] != 'x') {
+        if (data[0] != '0' || data[1] != 'x') {
             valid = false;
+        }
+
+        if (data.length() <= 2) {
+            valid = false;
+        }
+
+        if (data.length() > 2) {
+            for (int i = 2; i < data.length(); i++) {
+                char current = tolower(data[i]);
+                if (current > 'f') {
+                    valid = false;
+                }
+            }
+        }
+
+        for (int i = 0; i < data.length(); i++) {
+            data[i] = toupper(data[i]);
         }
 
         dataInt = hexToDecimal(data);
