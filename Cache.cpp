@@ -3,6 +3,7 @@
 #include <cmath> // for pow
 #include <cstdlib> // for rand()
 #include <sstream>
+#include <fstream>
 
 #include "Cache.h"
 
@@ -691,8 +692,11 @@ void Cache::cacheDump() {
     // .
     // .
 
+    ofstream outfile;
+    outfile.open("cache-dump.txt");
     for (int i = 0; i < S; i++) {
         sets[i].dumpSet();
+        outfile << sets[i].dumpSetToFile();
     }
 }
 

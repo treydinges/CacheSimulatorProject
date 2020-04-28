@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #include "Set.h"
 
@@ -21,10 +22,21 @@ Set::Set(int associativity, int blockSize) {
 }
 
 void Set::dumpSet() {
+    // ofstream outfile;
+    // outfile.open("cache-dump.txt");
     for (int i = 0; i < E; i++) {
         lines[i].dumpLine();
         cout << endl;
+        // outfile << lines[i].dumpLineToFile() << endl;
     }
+    // outfile.close();
+}
+string Set::dumpSetToFile() {
+    string set = "";
+    for (int i = 0; i < E; i++) {
+        set += lines[i].dumpLineToFile() + "\n";
+    }
+    return set;
 }
 
 void Set::viewSet() {
