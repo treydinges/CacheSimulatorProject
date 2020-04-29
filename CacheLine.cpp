@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <fstream>
 
 #include "CacheLine.h"
 
@@ -27,6 +28,13 @@ void CacheLine::dumpLine() {
     for (int i = 0; i < B; i++) {
         cout << data[i] << " ";
     }
+}
+string CacheLine::dumpLineToFile() {
+    string line;
+    for (int i = 0; i < B; i++) {
+        line += data[i] + " ";
+    }
+    return line;
 }
 
 void CacheLine::viewLine() {

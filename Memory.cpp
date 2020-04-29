@@ -114,9 +114,13 @@ void Memory::viewRam() {
     cout << endl;
 }
 void Memory::dumpRam() {
+    ofstream outfile;
+    outfile.open("memory-dump.txt");
     for (int i = 0; i < ram.size(); i++) {
         cout << ram[i] << endl;
+        outfile << ram[i] << endl;
     }
+    outfile.close();
 }
 
 bool Memory::isEmpty() {

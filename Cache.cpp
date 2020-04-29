@@ -3,6 +3,7 @@
 #include <cmath> // for pow
 #include <cstdlib> // for rand()
 #include <sstream>
+#include <fstream>
 
 #include "Cache.h"
 
@@ -541,7 +542,7 @@ void Cache::cacheWrite() {
             // random
             int random = rand() % E;
             evictionLine = random;
-            // cout << random << endl;
+            cout << random << endl;
         } else if (replacement == 2) {
             // LRU
             // find the least least recently used
@@ -691,8 +692,11 @@ void Cache::cacheDump() {
     // .
     // .
 
+    ofstream outfile;
+    outfile.open("cache-dump.txt");
     for (int i = 0; i < S; i++) {
         sets[i].dumpSet();
+        outfile << sets[i].dumpSetToFile();
     }
 }
 

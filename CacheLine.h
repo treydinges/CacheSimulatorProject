@@ -12,6 +12,7 @@ class CacheLine {
         CacheLine();
         CacheLine(int blockSize);
         void dumpLine();
+        string dumpLineToFile();
         void viewLine();
         void flushLine();
         string decimalToHex(int decimalValue);

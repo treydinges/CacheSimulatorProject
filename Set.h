@@ -14,6 +14,7 @@ class Set {
         Set();
         Set(int associativity, int blockSize);
         void dumpSet();
+        string dumpSetToFile();
         void viewSet();
         void flushSet();
         void setBlock(vector<string> block, int line);
