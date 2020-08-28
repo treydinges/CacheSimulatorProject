@@ -29,6 +29,7 @@ void CacheLine::dumpLine() {
         cout << data[i] << " ";
     }
 }
+
 string CacheLine::dumpLineToFile() {
     string line;
     for (int i = 0; i < B; i++) {
