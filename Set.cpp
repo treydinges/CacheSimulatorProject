@@ -31,6 +31,7 @@ void Set::dumpSet() {
     }
     // outfile.close();
 }
+
 string Set::dumpSetToFile() {
     string set = "";
     for (int i = 0; i < E; i++) {
